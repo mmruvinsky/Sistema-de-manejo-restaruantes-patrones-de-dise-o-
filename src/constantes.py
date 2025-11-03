@@ -1,0 +1,71 @@
+# --- MENU ---
+PRECIO_BASE_ENTRADA = 8.50
+PRECIO_BASE_PLATO_PRINCIPAL = 15.00
+PRECIO_BASE_POSTRE = 6.00
+PRECIO_BASE_BEBIDA = 3.50
+
+# --- BEBIDAS - VINOS MENDOCINOS ---
+VINOS_MENDOCINOS = {
+    "Catena Zapata Malbec": 45.00,
+    "Luigi Bosca DOC": 32.00,
+    "Rutini Cabernet Sauvignon": 28.00,
+    "Trapiche Medalla": 18.00,
+    "Alamos Malbec": 15.00
+}
+
+# --- BEBIDAS - VINOS SANJUANINOS ---
+VINOS_SANJUANINOS = {
+    "Graffigna Centenario": 35.00,
+    "Callia Alta Syrah": 25.00,
+    "Las Marianas Reserva": 22.00,
+    "Pedernal Malbec": 20.00,
+    "Vinorum Bonarda": 16.00
+}
+
+# --- COCINA ---
+TIEMPO_PREPARACION_ENTRADA = 10  # minutos
+TIEMPO_PREPARACION_PLATO_PRINCIPAL = 25  # minutos
+TIEMPO_PREPARACION_POSTRE = 15  # minutos
+TIEMPO_PREPARACION_BEBIDA = 2  # minutos
+
+TEMPERATURA_COCINA_MIN = 18  # °C
+TEMPERATURA_COCINA_MAX = 30  # °C
+TEMPERATURA_PARRILLA = 200  # °C
+TEMPERATURA_HORNO = 180  # °C
+
+# --- INVENTARIO ---
+STOCK_MINIMO_INGREDIENTE = 10  # unidades/kg/litros según tipo
+STOCK_CRITICO = 5
+DIAS_VENCIMIENTO_ALERTA = 3
+
+# --- PEDIDOS ---
+TIEMPO_MAXIMO_ESPERA = 45  # minutos
+TIEMPO_PRIORIDAD_EXPRESS = 20  # minutos
+CAPACIDAD_MAXIMA_COCINA = 15  # pedidos simultáneos
+
+# --- MESAS ---
+CANTIDAD_MESAS_INTERIOR = 15
+CANTIDAD_MESAS_TERRAZA = 10
+CANTIDAD_MESAS_VIP = 5
+TIEMPO_ROTACION_MESA = 90  # minutos promedio
+
+# --- MONITOREO ---
+INTERVALO_SENSOR_TEMPERATURA = 5.0  # segundos
+INTERVALO_SENSOR_STOCK = 30.0  # segundos
+INTERVALO_SENSOR_TIEMPO_ESPERA = 10.0  # segundos
+INTERVALO_MONITOR_COCINA = 3.0  # segundos
+THREAD_JOIN_TIMEOUT = 2.0
+
+# --- DESCUENTOS Y RECARGOS ---
+DESCUENTO_CLIENTE_FRECUENTE = 10  # %
+DESCUENTO_HAPPY_HOUR = 15  # %
+RECARGO_DELIVERY = 2.50  # USD
+RECARGO_SERVICIO_MESA = 10  # %
+
+# --- PERSONAL ---
+CAPACIDAD_MOZOS = 4  # mesas por mozo
+TURNOS_POR_DIA = 2  # almuerzo y cena
+
+# --- PERSISTENCIA ---
+DIRECTORIO_DATA = "data"
+EXTENSION_DATA = ".dat"
