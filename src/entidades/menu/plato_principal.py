@@ -1,0 +1,69 @@
+from src.entidades.menu.item_menu import ItemMenu
+from src.constantes import PRECIO_BASE_PLATO_PRINCIPAL, TIEMPO_PREPARACION_PLATO_PRINCIPAL
+
+class PlatoPrincipal(ItemMenu):
+    """Platos principales del menú"""
+    
+    def __init__(self, nombre: str, descripcion: str, 
+                 tipo_proteina: str, guarnicion: str):
+        super().__init__(
+            nombre=nombre,
+            descripcion=descripcion,
+            precio_base=PRECIO_BASE_PLATO_PRINCIPAL,
+            tiempo_preparacion=TIEMPO_PREPARACION_PLATO_PRINCIPAL
+        )
+        self._tipo_proteina = tipo_proteina  # "carne", "pollo", "pescado", "vegetariano"
+        self._guarnicion = guarnicion  # "papas fritas", "ensalada", "arroz"
+        self._punto_coccion = "medio"  # Para carnes
+        self._salsa = None
+
+        if self._tipo_proteina == "carne":
+            self._punto_coccion = "medio"
+    
+    def calcular_precio_final(self) -> float:
+        """Precio base + extras por tipo de proteína"""
+        precio = self._precio_base
+        
+        # Recargo por tipo de proteína
+        if self._tipo_proteina == "pescado":
+            precio += 5.00
+        elif self._tipo_proteina == "carne":
+            precio += 4.00
+        elif self._tipo_proteina == "pollo":
+            precio += 3.00
+        
+        # Recargo por salsa premium
+        if self._salsa and "premium" in self._salsa.lower():
+            precio += 2.00
+        
+        return precio
+    
+    def get_estacion_cocina(self) -> str:
+        """Define qué estación prepara este plato"""
+        if self._tipo_proteina in ["carne", "pollo"]:
+            return "Parrilla"
+        elif self._tipo_proteina == "pescado":
+            return "Plancha"
+        else:
+            return "Pastas"  
+    
+    def set_punto_coccion(self, punto: str):
+        """Configura el punto de cocción (jugoso, medio, bien cocido) solo para carnes"""
+        if self._tipo_proteina != "carne":
+            raise ValueError("El punto de cocción solo aplica para platos con proteína de carne")
+        puntos_validos = ["jugoso", "medio", "bien_cocido"]
+        if punto not in puntos_validos:
+            raise ValueError(f"Punto de cocción debe ser uno de: {puntos_validos}")
+        self._punto_coccion = punto
+    
+    def get_punto_coccion(self) -> str:
+        return self._punto_coccion
+    
+    def set_salsa(self, salsa: str):
+        self._salsa = salsa
+    
+    def get_tipo_proteina(self) -> str:
+        return self._tipo_proteina
+    
+    def get_guarnicion(self) -> str:
+        return self._guarnicion
