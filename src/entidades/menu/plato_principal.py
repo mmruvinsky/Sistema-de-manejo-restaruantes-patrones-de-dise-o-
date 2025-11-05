@@ -1,3 +1,5 @@
+# src/entidades/menu/plato_principal.py
+
 from src.entidades.menu.item_menu import ItemMenu
 from src.constantes import PRECIO_BASE_PLATO_PRINCIPAL, TIEMPO_PREPARACION_PLATO_PRINCIPAL
 
@@ -42,9 +44,16 @@ class PlatoPrincipal(ItemMenu):
         """Define qué estación prepara este plato"""
         if self._tipo_proteina in ["carne", "pollo"]:
             return "Parrilla"
+        
         elif self._tipo_proteina == "pescado":
-            return "Plancha"
+            return "Cocina" # Antes decía "Plancha"
+        
         else:
+            # Asumimos que "vegetariano" va a Pastas o Cocina
+            # Si "vegetariano" es el único 'else', va a Pastas.
+            # Si quieres que vaya a Cocina General, cambia esto:
+            if self._tipo_proteina == "vegetariano":
+                 return "Cocina" # O "Pastas" si prefieres
             return "Pastas"  
     
     def set_punto_coccion(self, punto: str):
