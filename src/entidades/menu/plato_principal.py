@@ -48,12 +48,11 @@ class PlatoPrincipal(ItemMenu):
             return "Pastas"  
     
     def set_punto_coccion(self, punto: str):
-        """Configura el punto de cocción (jugoso, medio, bien cocido) solo para carnes"""
+        PUNTOS_COCCION_CARNE = ["bleu", "jugoso", "a_punto", "bien_cocido"]
         if self._tipo_proteina != "carne":
-            raise ValueError("El punto de cocción solo aplica para platos con proteína de carne")
-        puntos_validos = ["jugoso", "medio", "bien_cocido"]
-        if punto not in puntos_validos:
-            raise ValueError(f"Punto de cocción debe ser uno de: {puntos_validos}")
+            raise ValueError("El punto de cocción solo aplica para carnes")
+        if punto not in PUNTOS_COCCION_CARNE:
+            raise ValueError(f"Punto debe ser uno de: {PUNTOS_COCCION_CARNE}")
         self._punto_coccion = punto
     
     def get_punto_coccion(self) -> str:
