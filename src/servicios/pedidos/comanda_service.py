@@ -3,8 +3,6 @@ from src.entidades.pedidos.pedido import Pedido
 from src.entidades.pedidos.item_pedido import ItemPedido
 from src.entidades.pedidos.tipo_servicio import TipoServicio
 
-# --- Implementación del Patrón Builder ---
-# (Lo ponemos aquí ya que no tienes una carpeta 'builder')
 
 class PedidoBuilder:
     """

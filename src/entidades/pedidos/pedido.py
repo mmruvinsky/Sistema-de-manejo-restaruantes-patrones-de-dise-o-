@@ -1,6 +1,12 @@
+# src/entidades/pedidos/pedido.py
+
 # --- IMPORTACIONES DE PATRONES ---
 from src.patrones.state.pedido_state import IPedidoState
 from src.patrones.state.pedido_recibidio_state import PedidoRecibidoState
+# --- Faltaban estas importaciones para que la clase funcione ---
+from src.patrones.state.pedido_listo_state import PedidoListoState
+from src.patrones.state.pedido_servido_state import PedidoServidoState
+# -------------------------------------------------------------
 from src.patrones.decorator.precio_decorator import ICalculablePrecio
 from src.entidades.pedidos.item_pedido import ItemPedido
 from src.entidades.pedidos.estado_pedido import EstadoPedido
@@ -51,7 +57,17 @@ class Pedido(ICalculablePrecio):
     def get_cliente_id(self) -> int:
         return self._cliente_id
     
-    # ... (Otros Getters no cambian) ...
+    def get_mesa_id(self) -> Optional[int]:
+        return self._mesa_id
+        
+    def get_tipo_servicio(self) -> TipoServicio:
+        return self._tipo_servicio
+
+    # --- MÉTODO AÑADIDO QUE FALTABA ---
+    def get_items(self) -> List[ItemPedido]:
+        """Retorna una copia de la lista de items del pedido"""
+        return self._items.copy()
+    # -------------------------------------
     
     def get_estado(self) -> IPedidoState:
         """Retorna el objeto de estado actual"""
@@ -65,6 +81,7 @@ class Pedido(ICalculablePrecio):
         self._estado = nuevo_estado
         
         # Lógica de fechas que estaba en el setter anterior
+        # (Asegúrate de tener importadas PedidoListoState y PedidoServidoState)
         if isinstance(nuevo_estado, PedidoListoState):
             self._fecha_hora_listo = datetime.now()
         elif isinstance(nuevo_estado, PedidoServidoState):
@@ -105,7 +122,10 @@ class Pedido(ICalculablePrecio):
         
         if self._es_cliente_frecuente:
             descuento_total += subtotal * (DESCUENTO_CLIENTE_FRECUENTE / 100)
-        # ... (etc) ...
+        
+        if self._es_happy_hour:
+             descuento_total += subtotal * (DESCUENTO_HAPPY_HOUR / 100)
+             
         return descuento_total
 
     def calcular_recargos(self) -> float:
@@ -114,7 +134,10 @@ class Pedido(ICalculablePrecio):
         
         if self._tipo_servicio == TipoServicio.DELIVERY:
             recargo_total += RECARGO_DELIVERY
-        # ... (etc) ...
+        elif self._tipo_servicio == TipoServicio.EN_SALON:
+             subtotal = self.calcular_subtotal()
+             recargo_total += subtotal * (RECARGO_SERVICIO_MESA / 100)
+             
         return recargo_total
     
     def calcular_total(self) -> float:
@@ -122,9 +145,6 @@ class Pedido(ICalculablePrecio):
         Calcula el total base. 
         Este es el método que será "envuelto" por los Decorators.
         """
-        # En la implementación pura de Decorator, esto solo retornaría
-        # el subtotal, y los decorators harían el resto.
-        # Por ahora, mantenemos la lógica base.
         subtotal = self.calcular_subtotal()
         descuentos = self.calcular_descuentos()
         recargos = self.calcular_recargos()
@@ -166,26 +186,22 @@ class Pedido(ICalculablePrecio):
     
     def puede_cancelarse(self) -> bool:
         """Verifica si el pedido puede ser cancelado"""
-        return self._estado in [EstadoPedido.RECIBIDO, EstadoPedido.EN_PREPARACION]
+        # Compara el tipo de estado (clase)
+        return isinstance(self._estado, (PedidoRecibidoState)) # Solo Recibido
     
     def esta_listo(self) -> bool:
         """Verifica si el pedido está listo para servir"""
-        return self._estado == EstadoPedido.LISTO
+        return isinstance(self._estado, PedidoListoState)
     
     # --- REPRESENTACIÓN ---
     def __str__(self) -> str:
-        estado_emoji = {
-            EstadoPedido.RECIBIDO: "📝",
-            EstadoPedido.EN_PREPARACION: "👨‍🍳",
-            EstadoPedido.LISTO: "✅",
-            EstadoPedido.SERVIDO: "🍽️",
-            EstadoPedido.CANCELADO: "❌"
-        }
+        # Usa el __str__ del objeto de estado
+        estado_str = str(self._estado) 
         
         items_str = "\n".join([f"  - {item}" for item in self._items])
         
-        return (f"\n{estado_emoji.get(self._estado, '📋')} Pedido #{self._id}\n"
-                f"Estado: {self._estado.value}\n"
+        return (f"\n📋 Pedido #{self._id}\n"
+                f"Estado: {estado_str}\n"
                 f"Tipo: {self._tipo_servicio.value}\n"
                 f"Mesa: {self._mesa_id if self._mesa_id else 'N/A'}\n"
                 f"Items:\n{items_str}\n"
@@ -196,8 +212,5 @@ class Pedido(ICalculablePrecio):
                 f"Hora pedido: {self._fecha_hora_pedido.strftime('%H:%M:%S')}")
     
     def __repr__(self) -> str:
-        return f"Pedido(id={self._id}, cliente={self._cliente_id}, estado={self._estado})"
+        return f"Pedido(id={self._id}, cliente={self._cliente_id}, estado={str(self._estado)})"
     
-    from datetime import datetime
-from typing import List, Optional
-

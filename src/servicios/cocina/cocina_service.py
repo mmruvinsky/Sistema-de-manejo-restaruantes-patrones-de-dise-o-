@@ -1,3 +1,5 @@
+# src/servicios/cocina/cocina_service.py
+
 from typing import List, Dict, Optional
 from src.entidades.cocina.estacion_cocina import EstacionCocina
 from src.entidades.cocina.orden_cocina import OrdenCocina
@@ -26,7 +28,11 @@ class CocinaService:
         
     def _inicializar_estaciones_std(self):
         """Crea las estaciones de cocina estándar al inicio."""
-        nombres_estaciones = ["Parrilla", "Pastas", "Postres", "Bebidas", "Cocina", "Plancha"]
+        
+        # --- LÍNEA CORREGIDA ---
+        # Eliminamos "Plancha" de la lista
+        nombres_estaciones = ["Parrilla", "Pastas", "Postres", "Bebidas", "Cocina"]
+        
         for nombre in nombres_estaciones:
             try:
                 estacion = EstacionFactory.crear_estacion(nombre)
@@ -54,6 +60,7 @@ class CocinaService:
         estacion = self.get_estacion(nombre_estacion)
         
         if not estacion:
+            # Esta excepción ahora se lanzará si un item devuelve "Plancha"
             raise ValueError(f"No se encontró la estación '{nombre_estacion}' para la orden #{orden.get_id()}")
             
         estacion.recibir_orden(orden)
