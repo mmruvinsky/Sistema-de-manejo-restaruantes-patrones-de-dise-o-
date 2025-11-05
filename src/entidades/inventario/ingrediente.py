@@ -3,15 +3,17 @@ from typing import Optional
 from src.entidades.inventario.unidad_medida import UnidadMedida
 from src.entidades.inventario.categoria_ingrediente import CategoriaIngrediente
 from src.constantes import STOCK_MINIMO_INGREDIENTE, STOCK_CRITICO, DIAS_VENCIMIENTO_ALERTA
+from src.patrones.observer.observable import Observable
 
 
-class Ingrediente:
+class Ingrediente(Observable):
     """Representa un ingrediente en el inventario del restaurante"""
     
     _contador_id = 0
     
     def __init__(self, nombre: str, categoria: CategoriaIngrediente, 
                  unidad_medida: UnidadMedida, cantidad_actual: float):
+        super().__init__()
         Ingrediente._contador_id += 1
         self._id = Ingrediente._contador_id
         self._nombre = nombre
@@ -106,16 +108,14 @@ class Ingrediente:
     
     # --- GESTIÓN DE STOCK ---
     def agregar_stock(self, cantidad: float):
-        """Agrega stock al ingrediente"""
-        if cantidad <= 0:
-            raise ValueError("La cantidad a agregar debe ser positiva")
-        
-        self._cantidad_actual += cantidad
-        self._fecha_ultimo_reabastecimiento = datetime.now()
-        
-        if self._cantidad_actual > self._cantidad_maxima:
-            # Advertencia de sobrestock
-            pass
+            """Agrega stock al ingrediente"""
+            if cantidad <= 0:
+                raise ValueError("La cantidad a agregar debe ser positiva")
+            
+            self._cantidad_actual += cantidad
+            self._fecha_ultimo_reabastecimiento = datetime.now()
+            
+            self.notificar()
     
     def consumir_stock(self, cantidad: float):
         """Consume stock del ingrediente"""
@@ -126,6 +126,8 @@ class Ingrediente:
             raise ValueError(f"Stock insuficiente. Disponible: {self._cantidad_actual} {self._unidad_medida}")
         
         self._cantidad_actual -= cantidad
+        
+        self.notificar() #
     
     def esta_agotado(self) -> bool:
         """Verifica si el ingrediente está agotado"""
